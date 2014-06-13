@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title> Sistema Experto GPI </title>
+    <link rel="stylesheet" type="text/css" href="bootstrap-3.1.1-dist/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="bootstrap-3.1.1-dist/css/bootstrap.min.css">
+    <script type="text/javascript" src="bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
+    
+    <script language="javascript">
+	var restart_aux = ['b','c','a','a','b','b','c','d','a','b','d','b','a','a'];
+	var bd_actual = new Array(23);
+	var compats = new Array(18);
+	var compat_index = new Array(18);
+	var bd_presidente_ejecutivo = [5,1,-1,1,1,0,1,0,-1,1,1,1,1,1,-1,-1,1,1,5,1,3,3,1];
+	var bd_gerente_general = [5,1,-1,1,1,0,1,0,0,1,0,1,1,1,0,0,0,1,5,1,3,3,1];
+	var bd_gerente_produccion = [4,1,-1,0,0,0,0,0,0,0,0,1,0,1,0,0,0,1,4,1,3,3,1];
+	var bd_gerente_marketing = [4,0,-1,0,0,0,0,0,0,0,1,0,0,1,0,0,0,1,4,1,3,3,1];
+	var bd_gerente_comercial = [4,0,-1,0,0,0,0,0,0,0,-1,0,0,1,0,0,0,1,4,1,3,3,1];
+	var bd_gerente_rrhh = [4,0,-1,1,1,1,1,0,1,0,0,0,0,1,1,1,1,0,4,1,3,3,2];
+	var bd_jefe_de_proyecto = [3,1,0,1,1,1,1,0,0,1,0,1,1,1,-1,-1,0,1,4,1,2,3,1];
+	var bd_jefe_de_operaciones = [3,1,0,1,0,0,0,0,0,1,0,1,0,1,0,0,0,1,3,1,2,2,2];
+	var bd_jefe_de_servicio_t = [2,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,3,1,2,2,2];
+	var bd_jefe_de_finanzas = [2,0,0,0,0,0,0,0,0,1,-1,0,0,1,0,0,0,1,3,1,2,2,2];
+	var bd_jefe_de_control_de_c = [2,0,0,0,0,0,0,0,0,1,-1,-1,0,1,0,0,0,0,3,1,2,2,2];
+	var bd_jefe_de_sucursal = [3,0,0,0,1,1,1,0,0,1,0,0,1,1,-1,-1,0,1,4,1,2,3,1];
+	var bd_vendedor = [1,0,1,0,1,0,0,1,0,0,0,0,-1,0,0,0,0,0,2,-1,1,1,2];
+	var bd_disenador = [2,0,1,0,1,0,0,1,0,1,0,0,-1,0,0,0,0,0,2,-1,1,1,2];
+	var bd_servicio_tecnico = [2,0,1,0,0,0,0,1,0,0,0,0,-1,0,0,0,0,0,1,-1,1,1,2];
+	var bd_recepcionista = [1,0,1,0,1,0,0,1,0,0,0,0,-1,0,0,0,0,0,1,-1,1,1,2];
+	var bd_programador = [2,0,1,0,0,0,0,1,0,1,0,0,-1,0,0,0,0,0,2,-1,1,1,2];
+	var bd_operario = [1,0,1,0,0,0,0,1,0,0,-1,0,-1,0,0,0,0,0,1,-1,1,1,3];
+	var nombres = ["Presidente Ejecutivo","Gerente General","Gerente de Produccion","Gerente de Marketing","Gerente Comercial","Gerente de R.R.H.H.",
+				 "Jefe de Proyecto","Jefe de Operaciones","Jefe de Servicio Tecnico","Jefe de Finanzas","Jefe de Control de Calidad","Jefe de Sucursal",
+				  "Vendedor","Dise&ntildeador","Servicio Tecnico","Recepcionista","Programador","Operario"];
+	var tipo_nombres = ["Estrategico","Tactico","Operacional"];
+	var max_p = [23,18,13,12,12,18,20,14,10,12,12,17,12,13,11,12,12,12];
+
+	function swapvista(str1,str2)
+	{
+		document.getElementById(str1).style.display = 'none';
+		document.getElementById(str2).style.display = '';
+	}
+
+	function reiniciar()
+	{
+		for(x = 1;x <=14;x++)
+		{
+		    document.getElementById('input' + x + restart_aux[x - 1]).checked = true;
+		}
+		document.getElementById('inputnombre').value = "";
+		document.getElementById('sexo_c').selected = true;
+		document.getElementById('ecivil_d').selected = true;
+	}
+
+	function llenar_arreglo() // <-- Cambiar
+	{
+	    if(document.getElementById("input1a").checked == true) // 1 -> 0 Competencias
+	      bd_actual[0] = 1;
+	    else if(document.getElementById("input1b").checked == true)
+	      bd_actual[0] = 2;
+	    else if(document.getElementById("input1c").checked == true)
+	      bd_actual[0] = 3;
+	    else if(document.getElementById("input1d").checked == true)
+	      bd_actual[0] = 4;
+	    else if(document.getElementById("input1e").checked == true)
+	      bd_actual[0] = 5;
+
+	    if(document.getElementById("input2a").checked == true) // 2 -> 18 Necesidades
+	      bd_actual[18] = 1;
+	    else if(document.getElementById("input2b").checked == true)
+	      bd_actual[18] = 2;
+	    else if(document.getElementById("input2c").checked == true)
+	      bd_actual[18] = 3;
+	    else if(document.getElementById("input2d").checked == true)
+	      bd_actual[18] = 4;
+	    else if(document.getElementById("input2e").checked == true)
+	      bd_actual[18] = 5;
+
+	    if(document.getElementById("input3a").checked == true) // 3 -> 20 Necesidad de Logro
+	      bd_actual[20] = 1;
+	    else if(document.getElementById("input3b").checked == true)
+	      bd_actual[20] = 2;
+	    else if(document.getElementById("input3c").checked == true)
+	      bd_actual[20] = 3;
+
+	    if(document.getElementById("input4a").checked == true) // 4 -> 21 Necesidad de Poder
+	      bd_actual[21] = 1;
+	    else if(document.getElementById("input4b").checked == true)
+	      bd_actual[21] = 2;
+	    else if(document.getElementById("input4c").checked == true)
+	      bd_actual[21] = 3;
+
+	    if(document.getElementById("input5a").checked == true) // 5 -> 20 Necesidad de Afiliacion
+	      bd_actual[22] = 1;
+	    else if(document.getElementById("input5b").checked == true)
+	      bd_actual[22] = 2;
+	    else if(document.getElementById("input5c").checked == true)
+	      bd_actual[22] = 3;
+
+	    if(document.getElementById("input6a").checked == true){ // 6 -> 1 Analitico y 2 Armonico
+		bd_actual[1] = 1;bd_actual[2] = 1;
+	    }else if(document.getElementById("input6b").checked == true){
+		bd_actual[1] = 1;bd_actual[2] = 0;
+	    }else if(document.getElementById("input6c").checked == true){
+		bd_actual[1] = 0;bd_actual[2] = 1;
+	    }else if(document.getElementById("input6d").checked == true){
+		bd_actual[1] = 0;bd_actual[2] = 0;
+	    }
+
+	    if(document.getElementById("input7a").checked == true){ // 6 -> 3 Competitivo y 4 Comunicador
+		bd_actual[3] = 1;bd_actual[4] = 1;
+	    }else if(document.getElementById("input7b").checked == true){
+		bd_actual[3] = 1;bd_actual[4] = 0;
+	    }else if(document.getElementById("input7c").checked == true){
+		bd_actual[3] = 0;bd_actual[4] = 1;
+	    }else if(document.getElementById("input7d").checked == true){
+		bd_actual[3] = 0;bd_actual[4] = 0;
+	    }
+
+	    if(document.getElementById("input8a").checked == true){ // 6 -> 5 Conector y 6 Desarrollador
+		bd_actual[5] = 1;bd_actual[6] = 1;
+	    }else if(document.getElementById("input8b").checked == true){
+		bd_actual[5] = 1;bd_actual[6] = 0;
+	    }else if(document.getElementById("input8c").checked == true){
+		bd_actual[5] = 0;bd_actual[6] = 1;
+	    }else if(document.getElementById("input8d").checked == true){
+		bd_actual[5] = 0;bd_actual[6] = 0;
+	    }
+
+	    if(document.getElementById("input9a").checked == true){ // 6 -> 7 Disciplinado y 19 X/Y McGregor (esta es diferente a las otras de 4)
+		bd_actual[7] = 1;bd_actual[19] = 0; // x
+	    }else if(document.getElementById("input9b").checked == true){
+		bd_actual[7] = 1;bd_actual[19] = 1; // y
+	    }else if(document.getElementById("input9c").checked == true){
+		bd_actual[7] = 0;bd_actual[19] = 0; // x
+	    }else if(document.getElementById("input9d").checked == true){
+		bd_actual[7] = 0;bd_actual[19] = 1; // y
+	    }
+
+	    if(document.getElementById("input10a").checked == true){ // 6 -> 8 Empatico y 9 Emprendedor
+		bd_actual[8] = 1;bd_actual[9] = 1;
+	    }else if(document.getElementById("input10b").checked == true){
+		bd_actual[8] = 1;bd_actual[9] = 0;
+	    }else if(document.getElementById("input10c").checked == true){
+		bd_actual[8] = 0;bd_actual[9] = 1;
+	    }else if(document.getElementById("input10d").checked == true){
+		bd_actual[8] = 0;bd_actual[9] = 0;
+	    }
+
+	    if(document.getElementById("input11a").checked == true){ // 6 -> 10 Flexible y 11 Futurista
+		bd_actual[10] = 1;bd_actual[11] = 1;
+	    }else if(document.getElementById("input11b").checked == true){
+		bd_actual[10] = 1;bd_actual[11] = 0;
+	    }else if(document.getElementById("input11c").checked == true){
+		bd_actual[10] = 0;bd_actual[11] = 1;
+	    }else if(document.getElementById("input11d").checked == true){
+		bd_actual[10] = 0;bd_actual[11] = 0;
+	    }
+
+	    if(document.getElementById("input12a").checked == true){ // 6 -> 12 Mandatario y 13 Responsable
+		bd_actual[12] = 1;bd_actual[13] = 1;
+	    }else if(document.getElementById("input12b").checked == true){
+		bd_actual[12] = 1;bd_actual[13] = 0;
+	    }else if(document.getElementById("input12c").checked == true){
+		bd_actual[12] = 0;bd_actual[13] = 1;
+	    }else if(document.getElementById("input12d").checked == true){
+		bd_actual[12] = 0;bd_actual[13] = 0;
+	    }
+
+	    if(document.getElementById("input13a").checked == true){ // 6 -> 14 FHB Carencias Emocionales y 15 FHB Carencias Materiales
+		bd_actual[14] = 1;bd_actual[15] = 1;
+	    }else if(document.getElementById("input13b").checked == true){
+		bd_actual[14] = 1;bd_actual[15] = 0;
+	    }else if(document.getElementById("input13c").checked == true){
+		bd_actual[14] = 0;bd_actual[15] = 1;
+	    }else if(document.getElementById("input13d").checked == true){
+		bd_actual[14] = 0;bd_actual[15] = 0;
+	    }
+
+	    if(document.getElementById("input14a").checked == true){ // 6 -> 16 FA Estabilidad Social y 17 FA Competitividad Agresiva y Desleal
+		bd_actual[16] = 1;bd_actual[17] = 1;
+	    }else if(document.getElementById("input14b").checked == true){
+		bd_actual[16] = 1;bd_actual[17] = 0;
+	    }else if(document.getElementById("input14c").checked == true){
+		bd_actual[16] = 0;bd_actual[17] = 1;
+	    }else if(document.getElementById("input14d").checked == true){
+		bd_actual[16] = 0;bd_actual[17] = 0;
+	    }
+
+	}
+
+	function obtener_compat(bd_algo,indice)
+	{
+	    for(x = 0; x < 23;x++)
+	    {
+	       if(x == 0 || x == 18)
+	      {
+		   if(bd_actual[x] < bd_algo[x])
+		      compats[indice] += 2 - 2*(bd_algo[x] - bd_actual[x]);
+		  else
+		      compats[indice] += 2 - 2*(bd_actual[x] - bd_algo[x]);
+	      }
+	       else if(x >= 20)
+	      {
+		   if(bd_actual[x] < bd_algo[x])
+		      compats[indice] += 1 - (bd_algo[x] - bd_actual[x]);
+		  else
+		      compats[indice] += 1 - (bd_actual[x] - bd_algo[x]);
+	      }
+	      else
+	      {
+		   if(bd_algo[x] != 0)
+		   {
+			if(bd_actual[x] == bd_algo[x])
+			   compats[indice]++;
+			else
+			  compats[indice]--;
+		   }
+	      }
+	    }
+	}
+
+	function ordenar_compat()
+	{
+	    for(x = 0;x < 18;x++)
+	    {
+		if(compats[x] <= 0)
+		  compats[x] = 0;
+		else
+		  compats[x] = (100*(compats[x]/max_p[x]))*0.8;
+		if(document.getElementById('sexo_c').selected == true)
+		    compats[x] += 10;
+		if(document.getElementById('ecivil_c').selected == true)
+		    compats[x] += 10;
+	    }
+	    for(x = 0;x < 18;x++)
+	    {
+		for(y = 0;y < 18;y++)
+		{
+		    if(x != y)
+		    {
+			if(compats[x] > compats[y])
+			{
+			    aux = compats[x];
+			    compats[x] = compats[y];
+			    compats[y] = aux;
+			    aux = compat_index[x];
+			    compat_index[x] = compat_index[y];
+			    compat_index[y] = aux;
+			}
+		    }
+		}
+	    }
+	    for(x = 0;x < 18;x++)
+	    {
+		for(y = 0;y < 18;y++)
+		{
+		    if(x != y && compats[x] == compats[y])
+		    {
+			if(compat_index[x] < compat_index[y])
+			{
+			    aux = compat_index[x];
+			    compat_index[x] = compat_index[y];
+			    compat_index[y] = aux;
+			}
+		    }
+		  }
+	      }
+	}
+
+	function procesar()
+	{
+	     for(x = 0;x < 18;x++)
+	     {
+		compats[x] = 0;
+		compat_index[x] = x;
+	     }
+	     llenar_arreglo();
+	     obtener_compat(bd_presidente_ejecutivo,0);
+	     obtener_compat(bd_gerente_general,1);
+	     obtener_compat(bd_gerente_produccion,2);
+	     obtener_compat(bd_gerente_marketing,3);
+	     obtener_compat(bd_gerente_comercial,4);
+	     obtener_compat(bd_gerente_rrhh,5);
+	     obtener_compat(bd_jefe_de_proyecto,6);
+	     obtener_compat(bd_jefe_de_operaciones,7);
+	     obtener_compat(bd_jefe_de_servicio_t,8);
+	     obtener_compat(bd_jefe_de_finanzas,9);
+	     obtener_compat(bd_jefe_de_control_de_c,10);
+	     obtener_compat(bd_jefe_de_sucursal,11);
+	     obtener_compat(bd_vendedor,12);
+	     obtener_compat(bd_disenador,13);
+	     obtener_compat(bd_servicio_tecnico,14);
+	     obtener_compat(bd_recepcionista,15);
+	     obtener_compat(bd_programador,16);
+	     obtener_compat(bd_operario,17);
+	     ordenar_compat();
+	     for(x = 1;x <= 18;x++)
+	     {
+		document.getElementById('rol' + x).innerHTML = nombres[compat_index[x - 1]];
+		document.getElementById('tipo' + x).innerHTML = tipo_nombres[Math.floor(compat_index[x - 1] / 6)];
+		document.getElementById('compat' + x).innerHTML = compats[x - 1].toFixed(2) + '%';
+	     }
+	}
+
+    </script>
+
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+
+        // Load the Visualization API and the piechart package.
+        google.load('visualization', '1.0', {'packages':['corechart']});
+
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.setOnLoadCallback(drawChart);
+
+        // Callback that creates and populates a data table,
+        // instantiates the pie chart, passes in the data and
+        // draws it.
+        function drawChart() {
+
+            // Create the data table.
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Topping');
+            data.addColumn('number', 'Slices');
+            data.addRows([
+                ['Mushrooms', 3],
+                ['Onions', 1],
+                ['Olives', 1],
+                ['Zucchini', 1],
+                ['Pepperoni', 2]
+            ]);
+
+            // Set chart options
+            var options = {'title':'How Much Pizza I Ate Last Night',
+                'width':400,
+                'height':300};
+
+            // Instantiate and draw our chart, passing in some options.
+            var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+    </script>
+  </head>
+  <body class="container">
+    <div style="text-align:center;" class="">
+      <br/><br/>
+      <div id="intro" class="alert-info form-horizontal ">
+          <br/>
+	  <div style="font-size:25px;" class="bg-primary">Bienvenido</div><br/><br/><br/>
+          <div class="">Registre sus datos</div>
+          <br/>
+
+	  <center>
+        <table class="">
+                <tr class="form-group">
+                    <td align="right" >
+                       Nombre :&nbsp;&nbsp;&nbsp;<br/><br/>
+
+                    </td>
+                    <td align="left">
+                        <input class="form-control" id="inputnombre" name="nombre" type="text" value=""  /><br/>
+                    </td>
+                </tr>
+                <tr class="form-group">
+                    <td align="right">
+                        Sexo:&nbsp;&nbsp;&nbsp;<br/><br/>
+                    </td>
+                    <td align="left" class="">
+                        <select id="inputsexo" name="sexo">
+                            <option id="sexo_c" value="hombre" selected>Masculino</option>
+                            <option value="mujer">Femenino</option>
+                        </select><br/><br/>
+                    </td>
+
+                </tr>
+            <tr></tr>
+
+	    <tr class="form-group">
+            <td align="right">
+		        Estado Civil:&nbsp;&nbsp;&nbsp;<br/><br/>
+	        </td>
+            <td align="left">
+                    <select id="inputecivil" name="ecivil">
+                        <option id="ecivil_d" value="soltero" selected>Soltero</option>
+                        <option id="ecivil_c" value="casado">Casado</option>
+                        <option value="divorciado">Divorciado</option>
+                        <option value="separadodehecho">Separado de Hecho</option>
+                        <option value="viudo">Viudo</option>
+		            </select><br/><br/>
+	        </td>
+        </tr>
+	 </table>
+      </center>
+	  <br/><button class="btn btn-default" onClick="swapvista('intro','pregunta1');">Siguiente</button>
+          <br/> <br/>
+      </div> <!--Primera hoja  -->
+
+      <div id="pregunta1" style="display:none;" class="bg-info"><br/>
+	  <div class="bg-primary">1. Si usted se ve enfrentado a un problema en conjunto con su equipo de trabajo, que en aspectos visibles es difícil de resolver, ¿cuál sería su modo de atender el problema?</div><br/><br/><br/>
+
+              <input id="input1b" name="respuesta1" type="radio" value="2" checked  /> Esperaría el momento en el cual mis habilidades serán útiles. <br/><br/>
+              <input id="input1e" name="respuesta1" type="radio" value="5" /> Buscaría un caso similar para seguir una estructura de lo que se debe hacer. <br/><br/>
+              <input id="input1c" name="respuesta1" type="radio" value="3" /> Dividiría las tareas entre los integrantes y fijaría plazos de entrega. <br/><br/>
+              <input id="input1d" name="respuesta1" type="radio" value="4" /> Establecería un método científico del problema, viendo cada parte en detalle.
+              <br/><br/>
+              <input id="input1a" name="respuesta1" type="radio" value="1" /> Realizaría una investigación previa del contenido adquiriendo la suficiente cantidad de conocimiento previo. <br/><br/>
+        <br/><button  class="btn btn-info" onClick="swapvista('pregunta1','pregunta2');">Siguiente</button>
+          <br/>
+          <br/>
+      </div>   <!--Pregunta Nº1  -->
+
+      <div id="pregunta2" style="display:none;" class="bg-info"><br/>
+	  <div class="bg-primary">2. ¿Si usted ganara la loteria, que haria primero?</div><br/><br/><br/>
+	  <input id="input2c" name="respuesta2" type="radio" value="3" checked /> Ayudar a sus seres queridos y cercanos. <br/><br/>
+	  <input id="input2a" name="respuesta2" type="radio" value="1" />Realizar una gran fiesta. <br/><br/>
+	  <input id="input2d" name="respuesta2" type="radio" value="4" /> Crear un gran proyecto para ser reconocido a largo plazo. <br/><br/>
+	  <input id="input2e" name="respuesta2" type="radio" value="5" /> Crear un negocio en su area favorita para dedicarse a ello. <br/><br/>
+	  <input id="input2b" name="respuesta2" type="radio" value="2" /> Mudarse a un lugar tranquilo. <br/><br/>
+	  <br/><button class="btn btn-info" onClick="swapvista('pregunta2','pregunta3');">Siguiente</button>
+          <br/><br/>
+      </div>        <!--Pregunta Nº2  -->
+
+      <div id="pregunta3" style="display:none;" class="bg-info"><br/>
+	  <div class="bg-primary">3. En una aplicación que haya realizado solamente usted:</div><br/><br/><br/>
+	  <input id="input3a" name="respuesta3" type="radio" value="1" checked /> Existe la opción de distribuirla de manera gratuita y casi anónima, si es que este es su fin. <br/><br/>
+	  <input id="input3c" name="respuesta3" type="radio" value="3" /> Debe indicar en todo lugar que sea posible que fue realizado por mi (o llevar mi marca, etc), y de ninguna manera será gratuito, ya que es mi trabajo. <br/><br/>
+	  <input id="input3b" name="respuesta3" type="radio" value="2" /> Si es algo que hice yo, debe al menos llevar mi firma y mis datos donde deba. <br/><br/>
+	  <br/><button class="btn btn-info" onClick="swapvista('pregunta3','pregunta4');">Siguiente</button> <br/><br/>
+      </div>        <!--Pregunta Nº3  -->
+
+      <div id="pregunta4" style="display:none;" class="bg-info"><br/>
+	  <div class="bg-primary">4. Usted:</div><br/><br/><br/>
+	  <input id="input4a" name="respuesta4" type="radio" value="1" checked /> Esta comodo realizando su trabajo, aunque lo obligen a realizarlo de una forma que no le acomode, asume que es mejor esa forma. <br/><br/>
+	  <input id="input4b" name="respuesta4" type="radio" value="2" /> No le incomoda recibir ordenes, siempre y cuando sean de alguien que sepa y tenga mas especiencia que usted. <br/><br/>
+	  <input id="input4c" name="respuesta4" type="radio" value="3" /> Se siente mas comodo dando ordenes, y se siente realizado si las cosas se hacen de la forma que usted propuso, independiente de si su forma es la mejor. <br/><br/>
+	  <br/><button class="btn btn-info" onClick="swapvista('pregunta4','pregunta5');">Siguiente</button>
+          <br/><br/>
+      </div>
+
+      <div id="pregunta5" style="display:none;" class="bg-info"><br/>
+	  <div class="bg-primary">5. Elija la opción que mas le represente:</div><br/><br/><br/>
+	  <input id="input5b" name="respuesta5" type="radio" value="2" checked /> Intento dar a conocer mis ideas causando el menor daño posible, aunque estas no causen el impacto o atención que quiero. <br/><br/>
+	  <input id="input5c" name="respuesta5" type="radio" value="3" /> Me guardo mis ideas y opiniones para  no causar problemas ni malas impresiones. <br/><br/>
+	  <input id="input5a" name="respuesta5" type="radio" value="1"  /> Doy a conocer mis ideas u opiniones, sin importar si a algunas personas le molesta o perjudica. <br/><br/>
+	  <br/><button class="btn btn-info" onClick="swapvista('pregunta5','pregunta6');">Siguiente</button>
+          <br/><br/>
+      </div>
+
+      <div id="pregunta6" style="display:none;" class="bg-info"><br/>
+	  <div class="bg-primary">6. Los trabajadores de su empresa, desean y pueden cambiar a su jefe por su mala gestion. Usted:</div><br/><br/><br/>
+	  <input id="input6b" name="respuesta6" type="radio" value="2" checked/> Apoya su remocion del cargo. <br/><br/>
+	  <input id="input6a" name="respuesta6" type="radio" value="1"  /> Sabe como mejorar las deficiencias, pero aun asi apoya su remoción del cargo. <br/><br/>
+	  <input id="input6d" name="respuesta6" type="radio" value="4" /> Decide mantenerse al margen, ya que no afectara su continuidad ni posición dentro de la empresa. <br/><br/>
+	  <input id="input6c" name="respuesta6" type="radio" value="3" /> Se comunica con el y le hace saber las críticas que le hacen y como podria solucionarlas. <br/><br/>
+	  <br/><button class="btn btn-info" onClick="swapvista('pregunta6','pregunta7');">Siguiente</button>
+          <br/><br/>
+      </div>
+
+      <div id="pregunta7" style="display:none;" class="bg-info"><br/>
+	  <div class="bg-primary">7. Usted se entera por casualidad de que vendra un supervisor a hacer una auditoria a su trabajo. </div><br/><br/><br/>
+	  <input id="input7c" name="respuesta7" type="radio" value="3" checked /> Le avisa a sus compañeros de trabajo para que se esfuerzen mas en dicho periodo. <br/><br/>
+	  <input id="input7d" name="respuesta7" type="radio" value="4" /> Confia en su trabajo y el del resto, y no realiza ninguna accion. <br/><br/>
+	  <input id="input7a" name="respuesta7" type="radio" value="1"  /> Lo comenta solo con su grupo cercano de colegas para que se preparen y se esfuerza por sobresalir del resto. <br/><br/>
+	  <input id="input7b" name="respuesta7" type="radio" value="2" /> Se esfuerza en silencio por sobresalir y optar a alguna posible recompensa. <br/><br/>
+	  <br/><button class="btn btn-info" onClick="swapvista('pregunta7','pregunta8');">Siguiente</button>
+          <br/><br/>
+      </div>
+
+      <div id="pregunta8" style="display:none;" class="bg-info"><br/>
+	  <div class="bg-primary">8. A usted lo nombran jefe de una nueva área dentro de la empresa, al momento de reclutar personal, ¿que hace?</div><br/><br/><br/>
+	  <input id="input8d" name="respuesta8" type="radio" value="4" checked /> Prefiere que se asignen a su grupo de trabajo. <br/><br/>
+	  <input id="input8c" name="respuesta8" type="radio" value="3" /> Recluta gente de otro departamento con especialidades útiles para la nueva área. <br/><br/>
+	  <input id="input8b" name="respuesta8" type="radio" value="2" /> Contrata gente nueva para darle un aire nuevo a la empresa. <br/><br/>
+	  <input id="input8a" name="respuesta8" type="radio" value="1" /> Contrata gente nueva pero especialista, previo proceso de selección. <br/><br/>
+	  <br/><button class="btn btn-info" onClick="swapvista('pregunta8','pregunta9');">Siguiente</button>
+          <br/><br/>
+      </div>
+
+      <div id="pregunta9" style="display:none;" class="bg-info"><br/>
+	  <div class="bg-primary">9. Usted es alumno de la universidad, y se encuentra en periodos finales de semestre, actualmente debe presentar un trabajo en el cual el grupo no ha estado concurriendo a las últimas reuniones, acercándose ya la fecha de entrega, bajo estas condiciones ¿qué postura adoptaría?</div><br/><br/><br/>
+	  <input id="input9a" name="respuesta9" type="radio" value="1" checked /> Establecer una fecha límite dentro del plazo crítico para esperar a que alguien se haga cargo. <br/><br/>
+	  <input id="input9d" name="respuesta9" type="radio" value="4" /> Me hago cargo del grupo teniendo un grado de tolerancia ante posibles fallas futuras en los integrantes. <br/><br/>
+	  <input id="input9b" name="respuesta9" type="radio" value="2" /> Me proclamo jefe de grupo y dirijo todos los aspectos estando dispuesto a no tolerar la falta de comunicación o asistencia a las reuniones. <br/><br/>
+	  <input id="input9c" name="respuesta9" type="radio" value="3" /> Espero a alguien que se haga cargo del asunto. <br/><br/>
+	  <br/><button class="btn btn-info" onClick="swapvista('pregunta9','pregunta10');">Siguiente</button>
+          <br/><br/>
+      </div>
+
+      <div id="pregunta10" style="display:none;" class="bg-info"><br/>
+	  <div class="bg-primary">10. Un antiguo socio de negocios y amigo,el cual acaba de ser estafado y lo perdio todo lo encuentra
+, al mismo tiempo usted acaba de conseguir una herencia, usted:</div><br/><br/><br/>
+	  <input id="input10b" name="respuesta10" type="radio" value="2" checked/> Le hace un prestamo a su socio para que inicie un nuevo negocio. <br/><br/>
+	  <input id="input10c" name="respuesta10" type="radio" value="3" /> Realiza un nuevo e innovador negocio por su cuenta. <br/><br/>
+	  <input id="input10d" name="respuesta10" type="radio" value="4" /> Guarda la herencia para otro momento. <br/><br/>
+	  <input id="input10a" name="respuesta10" type="radio" value="1"  /> Invita a su socio a formar un nuevo e innovador negocio. <br/><br/>
+	  <br/><button class="btn btn-info" onClick="swapvista('pregunta10','pregunta11');">Siguiente</button>
+          <br/><br/>
+      </div>
+
+      <div id="pregunta11" style="display:none;" class="bg-info"><br/>
+	  <div class="bg-primary">11. Le han ordenado que desarrolle un módulo de una aplicacion cualquiera en X tiempo, identifique la opcion que mas le acomode:</div><br/><br/><br/>
+	  <input id="input11d" name="respuesta11" type="radio" value="4" checked /> No se preocuparía de estas situaciones al desarrollar, solo lo hace... <br/><br/>
+	  <input id="input11a" name="respuesta11" type="radio" value="1" /> La desarrollaría organizadamente en cuanto a tiempo, intentando preveer problemas y atrasos pero dejando holguras para improvisar mejoras y posibles atrasos, en caso que puedan ocurrir. <br/><br/>
+	  <input id="input11c" name="respuesta11" type="radio" value="3" /> Intentaría preveer todos los posibles problemas y atrasos, para entregar de la forma que sea lo pedido a tiempo. <br/><br/>
+	  <input id="input11b" name="respuesta11" type="radio" value="2" /> Desarrollaría de manera libre, intentando cumplir con los tiempos pero siempre improvisando en el camino, ya que así trabaja de manera mas comoda. <br/><br/>
+	  <br/><button class="btn btn-info" onClick="swapvista('pregunta11','pregunta12');">Siguiente</button>
+          <br/><br/>
+      </div>
+
+      <div id="pregunta12" style="display:none;" class="bg-info"><br/>
+	  <div class="bg-primary">12. Usted es un miembro de un barco de guerra que debe cumplir una importante misión, pero su capitán acaba de desaparecer, entonces usted:</div><br/><br/><br/>
+	  <input id="input12b" name="respuesta12" type="radio" value="2" checked /> Toma el mando y hace que el barco navegue hacia una isla exótica. <br/><br/>
+	  <input id="input12c" name="respuesta12" type="radio" value="3" /> Espera a que alguien tome el mando y da su mejor esfuerzo para que la misión se cumpla. <br/><br/>
+	  <input id="input12a" name="respuesta12" type="radio" value="1" /> Toma el mando sin preguntar a nadie y hace que todos cumplan la misión. <br/><br/>
+	  <input id="input12d" name="respuesta12" type="radio" value="4" /> Aprovecha la ocasión y toma un bote salvavidas para huir de la guerra a un lugar tranquilo. <br/><br/>
+	  <br/><button class="btn btn-info" onClick="swapvista('pregunta12','pregunta13');">Siguiente</button>
+          <br/><br/>
+      </div>
+
+      <div id="pregunta13" style="display:none;"class="bg-info"><br/>
+	  <div class="bg-primary">13. Elija la relacion que mas se acomode a usted:</div><br/><br/><br/>
+	  <input id="input13a" name="respuesta13" type="radio" value="1" checked /> Me agrada  la relacion entre buen ambiente laboral y buen sueldo, pudiendo estas faltar en determinadas situaciones. <br/><br/>
+	  <input id="input13d" name="respuesta13" type="radio" value="4" /> No me acomoda ninguna opción anterior, las variables mencionadas no me interesan en lo absoluto. <br/><br/>
+	  <input id="input13b" name="respuesta13" type="radio" value="2" /> No me importa el bajo sueldo o nulas recompensas materiales, me importa trabajar en un ambiente grato, relajado y donde me sienta comodo y querido. <br/><br/>
+	  <input id="input13c" name="respuesta13" type="radio" value="3" /> Podría aguantar situaciones estresantes o ambientes hostiles, siempre y cuando el dinero o recompensas materiales lo valgan. <br/><br/>
+	  <br/><button class="btn btn-info" onClick="swapvista('pregunta13','pregunta14');">Siguiente</button>
+          <br/><br/>
+      </div>
+
+      <div id="pregunta14" style="display:none;" class="bg-info"><br/>
+	  <div class="bg-primary">14. ¿A usted en su entorno de trabajo que es lo que privilegia mas?</div><br/><br/><br/>
+	  <input id="input14a" name="respuesta14" type="radio" value="1" checked /> Equilibrar la vida social junto con el desempeño laboral. <br/><br/>
+	  <input id="input14b" name="respuesta14" type="radio" value="2" /> Las buenas relaciones con sus semejantes manteniendo un perfil social normal. <br/><br/>
+	  <input id="input14c" name="respuesta14" type="radio" value="3" /> Solamente lograr lo que se le propone en el ámbito laboral evitando a toda costa las interrupciones y respondiendo de manera tajante en casos que lo ameriten.<br/><br/>
+	  <input id="input14d" name="respuesta14" type="radio" value="4" /> Otros privilegios. <br/><br/>
+	  <br/><button class="btn btn-info" onClick="procesar();swapvista('pregunta14','result');">Siguiente</button>
+          <br/><br/>
+      </div>
+
+      <div id="result" class="row" style="display:none;">
+      <div id="resultado"   class="col-xs-6">
+	  <table class="table active table-condensed">
+          <tr class="child">
+              <th class="text-center info" colspan="4">Resultado</th>
+          </tr>
+          <tr>
+              <th></th>
+          </tr>
+
+         <tr>
+	      <th class="text-center active">Lugar</th>
+	      <th class="text-center active">Rol</th>
+	      <th class="text-center active">Tipo</th>
+	      <th class="text-center active">Compatibilidad (%)</th>
+	    </tr>
+	    <tr>
+	      <td>1</td>
+	      <td id="rol1"></td>
+	      <td id="tipo1"></td>
+	      <td id="compat1"></td>
+	    <tr>
+	    <tr>
+	      <td>2</td>
+	      <td id="rol2"></td>
+	      <td id="tipo2"></td>
+	      <td id="compat2"></td>
+	    <tr>
+	    <tr>
+	      <td>3</td>
+	      <td id="rol3"></td>
+	      <td id="tipo3"></td>
+	      <td id="compat3"></td>
+	    <tr>
+	    <tr>
+	      <td>4</td>
+	      <td id="rol4"></td>
+	      <td id="tipo4"></td>
+	      <td id="compat4"></td>
+	    <tr>
+	    <tr>
+	      <td>5</td>
+	      <td id="rol5"></td>
+	      <td id="tipo5"></td>
+	      <td id="compat5"></td>
+	    <tr>
+	    <tr>
+	      <td>6</td>
+	      <td id="rol6"></td>
+	      <td id="tipo6"></td>
+	      <td id="compat6"></td>
+	    <tr>
+	    <tr>
+	      <td>7</td>
+	      <td id="rol7"></td>
+	      <td id="tipo7"></td>
+	      <td id="compat7"></td>
+	    <tr>
+	    <tr>
+	      <td>8</td>
+	      <td id="rol8"></td>
+	      <td id="tipo8"></td>
+	      <td id="compat8"></td>
+	    <tr>
+	    <tr>
+	      <td>9</td>
+	      <td id="rol9"></td>
+	      <td id="tipo9"></td>
+	      <td id="compat9"></td>
+	    <tr>
+	    <tr>
+	      <td>10</td>
+	      <td id="rol10"></td>
+	      <td id="tipo10"></td>
+	      <td id="compat10"></td>
+	    <tr>
+	    <tr>
+	      <td>11</td>
+	      <td id="rol11"></td>
+	      <td id="tipo11"></td>
+	      <td id="compat11"></td>
+	    <tr>
+	    <tr>
+	      <td>12</td>
+	      <td id="rol12"></td>
+	      <td id="tipo12"></td>
+	      <td id="compat12"></td>
+	    <tr>
+	    <tr>
+	      <td>13</td>
+	      <td id="rol13"></td>
+	      <td id="tipo13"></td>
+	      <td id="compat13"></td>
+	    <tr>
+	    <tr>
+	      <td>14</td>
+	      <td id="rol14"></td>
+	      <td id="tipo14"></td>
+	      <td id="compat14"></td>
+	    <tr>
+	    <tr>
+	      <td>15</td>
+	      <td id="rol15"></td>
+	      <td id="tipo15"></td>
+	      <td id="compat15"></td>
+	    <tr>
+	    <tr>
+	      <td>16</td>
+	      <td id="rol16"></td>
+	      <td id="tipo16"></td>
+	      <td id="compat16"></td>
+	    <tr>
+	    <tr>
+	      <td>17</td>
+	      <td id="rol17"></td>
+	      <td id="tipo17"></td>
+	      <td id="compat17"></td>
+	    <tr>
+	    <tr>
+	      <td>18</td>
+	      <td id="rol18"></td>
+	      <td id="tipo18"></td>
+	      <td id="compat18"></td>
+	    <tr>
+	  </table>
+      </div>
+
+          <div id="chart_div"  class="col-xs-6">
+
+          </div>
+          <div id="button"  class="col-xs-6">
+              <br/><br/><button onClick="reiniciar();swapvista('resultado','intro');">Reiniciar</button>
+          </div>
+      </div>
+
+
+    </div>
+  <body>
+</html>
