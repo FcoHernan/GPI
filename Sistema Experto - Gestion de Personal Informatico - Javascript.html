@@ -6,8 +6,8 @@
     <link rel="stylesheet" type="text/css" href="bootstrap-3.1.1-dist/css/bootstrap-theme.min.css">
     <link rel="stylesheet" type="text/css" href="bootstrap-3.1.1-dist/css/bootstrap.min.css">
     <script type="text/javascript" src="bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
-    
-    <script language="javascript">
+
+    <script language="javascript" id="hola">
 	var restart_aux = ['b','c','a','a','b','b','c','d','a','b','d','b','a','a'];
 	var bd_actual = new Array(23);
 	var compats = new Array(18);
@@ -35,6 +35,13 @@
 				  "Vendedor","Dise&ntildeador","Servicio Tecnico","Recepcionista","Programador","Operario"];
 	var tipo_nombres = ["Estrategico","Tactico","Operacional"];
 	var max_p = [23,18,13,12,12,18,20,14,10,12,12,17,12,13,11,12,12,12];
+
+    <!-- Francisco -->
+    var estrategico= 0;
+    var tactico=0;
+    var operacional=0;
+    var total=0;
+    <!-- Fin Francisco-->
 
         function swapvista(str1,str2)
         {
@@ -301,14 +308,31 @@
             document.getElementById('rol' + x).innerHTML = nombres[compat_index[x - 1]];
             document.getElementById('tipo' + x).innerHTML = tipo_nombres[Math.floor(compat_index[x - 1] / 6)];
             document.getElementById('compat' + x).innerHTML = compats[x - 1].toFixed(2) + '%';
+                 if(tipo_nombres[Math.floor(compat_index[x - 1] / 6)]=="Estrategico"){
+                     estrategico=estrategico+compats[x - 1];
+                 }
+                 else{
+                     if(tipo_nombres[Math.floor(compat_index[x - 1] / 6)]=="Tactico"){
+                         tactico=tactico+compats[x - 1];
+                     }
+                     else{
+                         if(tipo_nombres[Math.floor(compat_index[x - 1] / 6)]=="Operacional"){
+                             operacional=operacional+compats[x - 1];
+                         }
+                     }
+                 }
              }
+            total= estrategico+tactico+operacional;
+            estrategico=Math.floor(estrategico/total*100);
+            tactico=Math.floor(tactico/total*100);
+            operacional=Math.floor(operacional/total*100);
         }
 
     </script>
 
     <!--Load the AJAX API-->
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript">
+    <script type="text/javascript" >
 
         // Load the Visualization API and the piechart package.
         google.load('visualization', '1.0', {'packages':['corechart']});
@@ -320,15 +344,17 @@
         // instantiates the pie chart, passes in the data and
         // draws it.
         function drawChart() {
-
+            document.getElementById('xd1').innerHTML=estrategico;
+            document.getElementById('xd2').innerHTML=tactico;
+            document.getElementById('xd3').innerHTML=operacional;
             // Create the data table.
             var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Topping');
-            data.addColumn('number', 'Slices');
+            data.addColumn('string', 'Tipo');
+            data.addColumn('number', 'Porcentaje');
             data.addRows([
-                ['Mushrooms', 3],
-                ['Onions', 1],
-                ['Olives', 1],
+                ['Estrategico', estrategico],
+                ['Tactico', tactico],
+                ['Operacional', operacional],
             ]);
 
             // Set chart options
@@ -671,6 +697,9 @@
           <div id="button"  class="col-xs-6">
               <br/><br/><button onClick="reiniciar();swapvista('result','intro');">Reiniciar</button>
           </div>
+          <div id="xd1"> </div>
+          <div id="xd2"> </div>
+          <div id="xd3"> </div>
       </div>
 
 
