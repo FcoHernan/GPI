@@ -241,16 +241,16 @@
                 if(x == 0 || x == 18)
                 {
                     if(bd_actual[x] < bd_algo[x])
-                    compats[indice] += 2 - 2*(bd_algo[x] - bd_actual[x]);
+                    compats[indice] = compats[indice]+ 2 - 2*(bd_algo[x] - bd_actual[x]);
                     else
-                    compats[indice] += 2 - 2*(bd_actual[x] - bd_algo[x]);
+                    compats[indice] = compats[indice]+ 2 - 2*(bd_actual[x] - bd_algo[x]);
                 }
                 else if(x >= 20)
                 {
                 if(bd_actual[x] < bd_algo[x])
-                    compats[indice] += 1 - (bd_algo[x] - bd_actual[x]);
+                    compats[indice] = compats[indice] + 1 - (bd_algo[x] - bd_actual[x]);
                 else
-                    compats[indice] += 1 - (bd_actual[x] - bd_algo[x]);
+                    compats[indice] = compats[indice] + 1 - (bd_actual[x] - bd_algo[x]);
                 }
                 else
                 {
@@ -274,9 +274,9 @@
                 else
                     compats[x] = (100*(compats[x]/max_p[x]))*0.8;
                 if(document.getElementById('sexo_c').selected == true)
-                    compats[x] += 10;
+                    compats[x] += 20;
                 if(document.getElementById('ecivil_c').selected == true)
-                    compats[x] += 10;
+                    compats[x] += 20;
             }
             for(x = 0;x < 18;x++)
             {
@@ -340,11 +340,14 @@
              obtener_compat(bd_programador,16);
              obtener_compat(bd_operario,17);
              ordenar_compat();
+
+             <!-- Llena el div "result" con los datos ya ordenados -->
              for(x = 1;x <= 18;x++)
              {
                  document.getElementById('rol' + x).innerHTML = nombres[compat_index[x - 1]];
                  document.getElementById('tipo' + x).innerHTML = tipo_nombres[Math.floor(compat_index[x - 1] / 6)];
                  document.getElementById('compat' + x).innerHTML = compats[x - 1].toFixed(2) + '%';
+
                  <!--Para el grafico-->
                  if(tipo_nombres[Math.floor(compat_index[x - 1] / 6)]=="Estrategico"){
                      estrategico=estrategico+compats[x - 1];
